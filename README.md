@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-1. Node >= v16.13.1
+1. Node >= v18.13.0
 1. pnpm >= 7.5.2
 
 ### Installation
