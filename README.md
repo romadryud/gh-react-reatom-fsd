@@ -23,6 +23,8 @@
 
 3. Rename `.env.example` to `.env` and provide your own.
 
+   Creating a personal access token classic [link](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/)
+
 4. Start dev server
 
 ```bash
