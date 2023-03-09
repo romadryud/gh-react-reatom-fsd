@@ -36,3 +36,7 @@
 - ChakraUI - component library
 - Playwright - e2e tests
 - vitest - unit tests
+
+## Structure
+
+Feature-Sliced Design
