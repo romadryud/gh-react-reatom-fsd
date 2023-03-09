@@ -15,11 +15,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.13.0
+          node-version: ${{ matrix.node-version }}
       - name: Install pnpm
         run: npm install -g pnpm
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       - name: Set environment variables
         run: |
           echo GH_API_URL=$GH_API_URL >> .env
@@ -28,7 +28,7 @@ jobs:
           GH_API_URL: ${{ secrets.GH_API_URL }}
           GH_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install chromium  --with-deps
+        run: pnpm exec playwright install chromium --with-deps
       - name: Run ESlint
         run: pnpm lint
       - name: Run Unit tests
