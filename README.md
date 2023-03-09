@@ -55,4 +55,12 @@ flowchart TB
     E2ETests --> Preview
 ```
 
-Each time we merge to main, we deploy it to vercel.
+Each merge to main has a following flow:
+
+```mermaid
+flowchart TB
+    subgraph test [Test]
+    Lint --> UnitTest["Unit tests"] --> E2ETests["E2E tests"]
+    end
+    E2ETests --> Deploy
+```

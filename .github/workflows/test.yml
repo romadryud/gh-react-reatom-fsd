@@ -1,0 +1,39 @@
+name: test
+on:
+  workflow_call:
+    secrets:
+      GH_API_URL:
+        required: true
+      GH_API_TOKEN:
+        required: true
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node-version: [18.13.0]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Set environment variables
+        run: |
+          echo GH_API_URL=$GH_API_URL >> .env
+          echo GH_API_TOKEN=$GH_API_TOKEN >> .env
+        env:
+          GH_API_URL: ${{ secrets.GH_API_URL }}
+          GH_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install chromium --with-deps
+      - name: Run ESlint
+        run: pnpm lint
+      - name: Run Unit tests
+        run: pnpm test:unit
+      - name: Run e2e tests
+        run: pnpm dev & pnpm test:e2e
