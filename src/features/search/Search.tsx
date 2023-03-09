@@ -1,22 +1,19 @@
 import { Button, Flex, FormControl, Input } from "@chakra-ui/react";
-import { useAction, useAtom } from "@reatom/npm-react";
-import { UserModel } from "entities/user";
+import { useAtom } from "@reatom/npm-react";
 
 import { searchAtom } from "./model";
 
-const { fetchUsers } = UserModel;
+interface ISearch {
+	onSearch: (query: string) => void;
+	isLoading: boolean;
+}
 
-export const Search = () => {
+export const Search = ({ onSearch, isLoading }: ISearch) => {
 	const [search, setSearch] = useAtom(searchAtom);
-	const onFetchUser = useAction(fetchUsers);
-	const [isLoading] = useAtom(
-		(ctx) =>
-			ctx.spy(fetchUsers.pendingAtom) + ctx.spy(fetchUsers.retriesAtom) > 0
-	);
 
 	const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		onFetchUser(search);
+		onSearch(search);
 	};
 
 	return (
