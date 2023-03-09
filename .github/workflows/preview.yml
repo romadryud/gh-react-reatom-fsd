@@ -32,9 +32,9 @@ jobs:
       - name: Run ESlint
         run: pnpm lint
       - name: Run Unit tests
-        run: pnpm test
+        run: pnpm test:unit
       - name: Run e2e tests
-        run: pnpm dev & pnpm e2e
+        run: pnpm dev & pnpm test:e2e
   preview:
     needs: test
     runs-on: ubuntu-20.04

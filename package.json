@@ -6,8 +6,8 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
-		"test": "vitest",
-		"e2e": "playwright test",
+		"test:unit": "vitest",
+		"test:e2e": "playwright test",
 		"lint": "eslint --ext .ts,.tsx .",
 		"preview": "vite preview"
 	},
