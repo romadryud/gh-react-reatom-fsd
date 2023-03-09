@@ -42,7 +42,7 @@ export const fetchUsers = reatomAsync(
 		onReject: (_ctx, error) => {
 			if (error instanceof ValidationError) {
 				errorToast(
-					"user-toast",
+					"validation-error-user",
 					"Seems like API was updated and no longer all fields are present"
 				);
 			}
