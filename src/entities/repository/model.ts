@@ -71,7 +71,7 @@ export const reatomRepository = (name: string) => {
 			if (error instanceof ValidationError) {
 				hasMoreAtom(ctx, false);
 				errorToast(
-					"repo-toast",
+					"validation-error-repo",
 					"Seems like API was updated and no longer all fields are present"
 				);
 			}

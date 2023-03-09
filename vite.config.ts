@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { configDefaults } from "vitest/config";
 
 import { generateAlias } from "./src/shared/lib/generateAlias";
 
@@ -9,5 +10,9 @@ export default defineConfig({
 	plugins: [react()],
 	resolve: {
 		alias: generateAlias(),
+	},
+	test: {
+		exclude: [...configDefaults.exclude, "e2e/*"],
+		environment: "happy-dom",
 	},
 });
