@@ -1,0 +1,73 @@
+name: preview
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node-version: [18.13.0]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.13.0
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Set environment variables
+        run: |
+          echo GH_API_URL=$GH_API_URL >> .env
+          echo GH_API_TOKEN=$GH_API_TOKEN >> .env
+        env:
+          GH_API_URL: ${{ secrets.GH_API_URL }}
+          GH_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install chromium  --with-deps
+      - name: Run ESlint
+        run: pnpm lint
+      - name: Run Unit tests
+        run: pnpm test
+      - name: Run e2e tests
+        run: pnpm dev & pnpm e2e
+  preview:
+    needs: test
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node-version: [18.13.0]
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: |
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} >> preview-url.txt
+          echo PREVIEW_URL=$(cat preview-url.txt) >> $GITHUB_ENV
+      - uses: actions/github-script@v3
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'The preview URL is: ${{ env.PREVIEW_URL }}'
+            });
